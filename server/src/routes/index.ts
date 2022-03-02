@@ -1,11 +1,8 @@
 import { Router } from 'express';
+import userRouter from './user.route';
 
 const rootRouter = Router();
 
-rootRouter.use('/api/chat', (req, res) => {
-  res.send({
-    message: 'Hello World',
-  });
-});
+rootRouter.use('/user', userRouter);
 
 export default rootRouter;

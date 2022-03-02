@@ -1,16 +1,19 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import cors = require('cors');
 import express from 'express';
 import mongoose from 'mongoose';
 
 import rootRouter from './routes';
 
-// mongoose.connect(process.env.MONGOOSE_URI);
+mongoose.connect(process.env.MONGOOSE_URI);
 
-// const db = mongoose.connection;
-// db.on('error', console.error.bind(console, 'connection error'));
-// db.once('open', () => {
-//   console.log('db connected');
-// });
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error'));
+db.once('open', () => {
+  console.log('db connected');
+});
 
 export default class App {
   app: express.Application;
