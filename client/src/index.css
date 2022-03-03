@@ -26,3 +26,33 @@ code {
   border: 1px solid black;
   margin: auto;
 }
+
+.chat-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.chat-box {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.chat-contents {
+  padding: 2rem;
+  background-color: #fff;
+  height: 30rem;
+}
+
+.message-container {
+  width: fit-content;
+  padding: 0.3rem;
+  margin-bottom: 1rem;
+  border: 1px solid #a5a5a5;
+}
+
+.message-container .message-nickname {
+  font-weight: 600;
+}

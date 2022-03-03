@@ -26,6 +26,7 @@ const Login: React.FC = () => {
       navigate('/chat');
     }
   }, [navigate, nickname, setValue]);
+
   return (
     <main className='login-container'>
       <div className='login-box'>
