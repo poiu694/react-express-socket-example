@@ -50,21 +50,12 @@ const Chat: React.FC = () => {
       socket.emit('send message', newMessage);
       const data = await requestAPI.post('/api/chat', newMessage);
       if (data.status === 200) {
-        setChats((prev) => [...prev, newMessage]);
+        // setChats((prev) => [...prev, newMessage]);
         setInput('');
       }
     },
     [input, myName, socket]
   );
-
-  // const handleKeyDown = useCallback(
-  //   (e: React.KeyboardEvent<HTMLInputElement>) => {
-  //     if (e.keyCode === 13) {
-  //       handleButtonClick();
-  //     }
-  //   },
-  //   [handleButtonClick]
-  // );
 
   useLayoutEffect(() => {
     const getAllChats = async () => {
@@ -80,11 +71,16 @@ const Chat: React.FC = () => {
     getAllChats();
   }, []);
 
+  const socketHandler = useCallback((msg: Item) => {
+    setChats((prev) => [...prev, msg]);
+  }, []);
   useEffect(() => {
-    socket.on('chat message', (msg) => {
-      setChats((prev) => [...prev, msg]);
-    });
-  }, [socket]);
+    socket.on('chat message', socketHandler);
+
+    return () => {
+      socket.off('chat message', socketHandler);
+    };
+  }, [socket, socketHandler]);
 
   return (
     <main className='chat-container'>
@@ -100,11 +96,7 @@ const Chat: React.FC = () => {
           ))}
         </section>
         <div className='chat-input'>
-          <input
-            // onKeyDown={handleKeyDown}
-            value={input}
-            onChange={handleInputChange}
-          />
+          <input value={input} onChange={handleInputChange} />
           <button onClick={handleButtonClick}>입력</button>
         </div>
       </div>
