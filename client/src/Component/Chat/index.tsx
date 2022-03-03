@@ -1,5 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+
 import useLocalStorage from '../../hook/useLocalStorage';
 import requestAPI from '../../util/request';
 
@@ -24,6 +26,8 @@ const Chat: React.FC = () => {
   const [localStorageName] = useLocalStorage('nickname', '');
   const [chats, setChats] = useState<Item[]>([]);
 
+  const socket = io('http://localhost:8080');
+
   useLayoutEffect(() => {
     setMyName(localStorageName);
   }, [localStorageName]);
@@ -35,27 +39,32 @@ const Chat: React.FC = () => {
     []
   );
 
-  const handleButtonClick = useCallback(async () => {
-    const newMessage = {
-      _id: uuidv4(),
-      nickname: myName,
-      content: input,
-    };
-    const data = await requestAPI.post('/api/chat', newMessage);
-    if (data.status === 200) {
-      setChats((prev) => [...prev, newMessage]);
-      setInput('');
-    }
-  }, [input, myName]);
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.keyCode === 13) {
-        handleButtonClick();
+  const handleButtonClick = useCallback(
+    async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.preventDefault();
+      const newMessage = {
+        _id: uuidv4(),
+        nickname: myName,
+        content: input,
+      };
+      socket.emit('send message', newMessage);
+      const data = await requestAPI.post('/api/chat', newMessage);
+      if (data.status === 200) {
+        setChats((prev) => [...prev, newMessage]);
+        setInput('');
       }
     },
-    [handleButtonClick]
+    [input, myName, socket]
   );
+
+  // const handleKeyDown = useCallback(
+  //   (e: React.KeyboardEvent<HTMLInputElement>) => {
+  //     if (e.keyCode === 13) {
+  //       handleButtonClick();
+  //     }
+  //   },
+  //   [handleButtonClick]
+  // );
 
   useLayoutEffect(() => {
     const getAllChats = async () => {
@@ -70,6 +79,12 @@ const Chat: React.FC = () => {
     };
     getAllChats();
   }, []);
+
+  useEffect(() => {
+    socket.on('chat message', (msg) => {
+      setChats((prev) => [...prev, msg]);
+    });
+  }, [socket]);
 
   return (
     <main className='chat-container'>
@@ -86,7 +101,7 @@ const Chat: React.FC = () => {
         </section>
         <div className='chat-input'>
           <input
-            onKeyDown={handleKeyDown}
+            // onKeyDown={handleKeyDown}
             value={input}
             onChange={handleInputChange}
           />
