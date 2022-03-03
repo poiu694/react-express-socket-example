@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import cors = require('cors');
 import express from 'express';
 import mongoose from 'mongoose';
