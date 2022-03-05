@@ -28,10 +28,6 @@ const Chat: React.FC = () => {
 
   const socket = io('http://localhost:8080');
 
-  useLayoutEffect(() => {
-    setMyName(localStorageName);
-  }, [localStorageName]);
-
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setInput(e.target.value);
@@ -50,13 +46,19 @@ const Chat: React.FC = () => {
       socket.emit('send message', newMessage);
       const data = await requestAPI.post('/api/chat', newMessage);
       if (data.status === 200) {
-        // setChats((prev) => [...prev, newMessage]);
         setInput('');
       }
     },
     [input, myName, socket]
   );
 
+  const socketHandler = useCallback((msg: Item) => {
+    setChats((prev) => [...prev, msg]);
+  }, []);
+
+  /**
+   * 렌더링 전에, 채팅을 모두 가져오고 유저의 이름을 설정합니다.
+   */
   useLayoutEffect(() => {
     const getAllChats = async () => {
       try {
@@ -69,11 +71,12 @@ const Chat: React.FC = () => {
       }
     };
     getAllChats();
-  }, []);
+    setMyName(localStorageName);
+  }, [localStorageName]);
 
-  const socketHandler = useCallback((msg: Item) => {
-    setChats((prev) => [...prev, msg]);
-  }, []);
+  /**
+   * 소켓 이벤트를 만들고, 해제하면서 렌더링 이슈를 잡습니다.
+   */
   useEffect(() => {
     socket.on('chat message', socketHandler);
 
