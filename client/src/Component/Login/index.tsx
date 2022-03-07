@@ -3,10 +3,11 @@ import { useCallback, useState } from 'react';
 import requestAPI from '../../util/request';
 import useLocalStorage from '../../hook/useLocalStorage';
 import { useNavigate } from 'react-router-dom';
+import { NICKNAME } from '../../util/constant';
 
 const Login: React.FC = () => {
   const [nickname, setNickname] = useState<string>('');
-  const [, setValue] = useLocalStorage('nickname', '');
+  const [, setValue] = useLocalStorage(NICKNAME, '');
   const navigate = useNavigate();
 
   const handleInputChange = useCallback(
