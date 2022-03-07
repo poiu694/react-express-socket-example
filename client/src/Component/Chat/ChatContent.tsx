@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useCallback } from 'react';
 
 import { Item } from '../../util/type';
-import useSocketRef from '../../util/useSocketRef';
+import useSocketRef from '../../hook/useSocketRef';
 
 interface ChatContentProps {
   chats: Item[];

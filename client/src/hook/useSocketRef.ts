@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { CHAT_MESSAGE } from './constant';
-import socket from './socket';
+import { CHAT_MESSAGE } from '../util/constant';
+import socket from '../util/socket';
 
 const useSocketRef = ({ handler }: { handler: Function }) => {
   const ref = useRef(null);
