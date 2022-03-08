@@ -25,5 +25,7 @@
 ## 기술 스택
 
 백엔드: Express + Typescript
+
 프론트엔드: React + Typescript
+
 데이터베이스: MongoDB
