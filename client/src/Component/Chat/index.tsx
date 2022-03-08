@@ -21,7 +21,7 @@ const Chat: React.FC = () => {
     } catch (err) {
       console.log(err);
     } finally {
-      setMyName(localStorageName);
+      setMyName(localStorageName as string);
     }
   }, [localStorageName]);
 

@@ -9,18 +9,17 @@ const useLocalStorage = (key: string, initialValue: any) => {
   }, [initialValue, key]);
 
   const setValue = useCallback(
-    (value) => {
+    (value: any) => {
       try {
-        const nextValue = value instanceof Function ? value(localValue) : value;
-        window.localStorage.setItem(key, JSON.stringify(nextValue));
-        setLocalValue(nextValue);
+        window.localStorage.setItem(key, JSON.stringify(value));
+        setLocalValue(value);
 
         window.dispatchEvent(new Event('local-storage'));
       } catch (err) {
         console.warn(err);
       }
     },
-    [key, localValue]
+    [key]
   );
 
   useEffect(() => {

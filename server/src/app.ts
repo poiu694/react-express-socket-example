@@ -1,9 +1,10 @@
 import cors = require('cors');
 import express from 'express';
 import mongoose from 'mongoose';
+import { Server } from 'socket.io';
+import * as http from 'http';
 
 import rootRouter from './routes';
-import { Server } from 'socket.io';
 
 function connectDB() {
   mongoose.connect(process.env.MONGOOSE_URI);
@@ -18,7 +19,7 @@ function connectDB() {
 export default class App {
   app: express.Application;
   port: string;
-  server: any;
+  server: http.Server;
 
   constructor() {
     this.app = express();

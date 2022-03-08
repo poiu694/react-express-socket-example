@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback } from 'react';
 
-import { Item } from '../../util/type';
+import { HandlerType, Item } from '../../util/type';
 import useSocketRef from '../../hook/useSocketRef';
 
 interface ChatContentProps {
@@ -18,8 +18,8 @@ const Message: React.FC<Item> = ({ nickname, content }) => {
 };
 
 const ChatContent: React.FC<ChatContentProps> = ({ chats, setChats }) => {
-  const socketHandler = useCallback(
-    (msg: Item) => {
+  const socketHandler = useCallback<HandlerType>(
+    (msg) => {
       setChats((prev) => [...prev, msg]);
     },
     [setChats]
