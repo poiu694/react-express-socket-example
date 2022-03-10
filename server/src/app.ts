@@ -1,20 +1,10 @@
 import cors = require('cors');
 import express from 'express';
-import mongoose from 'mongoose';
-import { Server } from 'socket.io';
 import * as http from 'http';
 
 import rootRouter from './routes';
-
-function connectDB() {
-  mongoose.connect(process.env.MONGOOSE_URI);
-
-  const db = mongoose.connection;
-  db.on('error', console.error.bind(console, 'connection error'));
-  db.once('open', () => {
-    console.log('db connected');
-  });
-}
+import DBConfig from './db';
+import SocketAPI from './socket';
 
 export default class App {
   app: express.Application;
@@ -32,12 +22,12 @@ export default class App {
   private config() {
     this.app.use(express.json()); // json parsing
     this.app.use(express.urlencoded({ extended: false })); // body parsing
-    connectDB();
+    DBConfig.connectMongoDB();
   }
 
   private middleware() {
     const corsOption = {
-      origin: 'http://localhost:3000',
+      origin: process.env.FRONTEND_URI,
       credentials: true,
     };
     this.app.use(cors(corsOption));
@@ -52,21 +42,7 @@ export default class App {
       console.log(`LISTEN ON PORT ${this.port}`);
     });
 
-    const io = new Server(this.server, {
-      cors: {
-        origin: 'http://localhost:3000',
-      },
-    });
-
-    io.on('connection', (socket) => {
-      console.log('connected socket');
-      socket.on('send message', (msg) => {
-        console.log(msg);
-        io.emit('chat message', msg);
-      });
-      socket.on('disconnect', () => {
-        console.log('disconnected');
-      });
-    });
+    const socket = new SocketAPI(this.server);
+    socket.connectSocket();
   }
 }
